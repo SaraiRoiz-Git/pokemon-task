@@ -35,18 +35,18 @@ function App() {
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [detailsError, setDetailsError] = useState<string | null>(null);
-  
+
   const fetchPokemonList = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
       const data = await response.json();
-      
+
       const randomPokemon = [];
       const usedIndices = new Set();
-      
+
       while (randomPokemon.length < 10) {
         const randomIndex = Math.floor(Math.random() * data.results.length);
         if (!usedIndices.has(randomIndex)) {
@@ -54,7 +54,7 @@ function App() {
           randomPokemon.push(data.results[randomIndex]);
         }
       }
-      
+
       const pokemonWithImages = [];
       for (const pokemon of randomPokemon) {
         const detailResponse = await fetch(pokemon.url);
@@ -65,7 +65,7 @@ function App() {
           image: details.sprites.front_default
         });
       }
-      
+
       setPokemonList(pokemonWithImages);
     } catch (err) {
       setError('Failed to load Pokemon');
@@ -78,14 +78,14 @@ function App() {
   const fetchPokemonDetails = async (url: string) => {
     setDetailsLoading(true);
     setDetailsError(null);
-    
+
     try {
       const response = await fetch(url);
       const data = await response.json();
-      
+
       const speciesResponse = await fetch(data.species.url);
       const speciesData = await speciesResponse.json();
-      
+
       setSelectedPokemon({
         ...data,
         description: speciesData.flavor_text_entries[0]?.flavor_text || 'No description'
