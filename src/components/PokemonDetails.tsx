@@ -269,7 +269,7 @@ export function PokemonDetails({ pokemon, loading, error, onRetry }: PokemonDeta
       <Title>Pokémon Details</Title>
       <DetailsContent>
         <Header>
-          <PokemonImage src={pokemon.sprites.front_default} />
+          <PokemonImage src={pokemon.image || pokemon.sprites.front_default} />
           <HeaderInfo>
             <PokemonName>{pokemon.name}</PokemonName>
             <PokemonId>#{pokemon.id.toString().padStart(3, '0')}</PokemonId>

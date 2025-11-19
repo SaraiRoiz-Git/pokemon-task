@@ -97,7 +97,7 @@ export function PokemonList({
   selectedPokemon 
 }: PokemonListProps) {
   
-  const isSelected = (poke: any) => poke.url === selectedPokemon?.species?.url;
+  const isSelected = (poke: any) => poke.url === selectedPokemon?.url;
 
   if (loading) {
     return (
