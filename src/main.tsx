@@ -5,7 +5,7 @@ import App from './App';
 import './index.css';
 import { CACHE_STALE_TIME, CACHE_GC_TIME, QUERY_RETRY_COUNT } from './config/constants';
 
-const queryClient = new QueryClient({
+const queryClient = new QueryClient({//create a query client to manage the data fetching and caching
   defaultOptions: {
     queries: {
       staleTime: CACHE_STALE_TIME,

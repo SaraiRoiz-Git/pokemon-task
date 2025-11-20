@@ -1,3 +1,5 @@
+// Pokemon API response types
+
 export interface PokemonListItem {
   name: string;
   url: string;
@@ -8,36 +10,23 @@ export interface PokemonListResponse {
   results: PokemonListItem[];
 }
 
-export interface PokemonSprites {
-  front_default: string;
-}
-
-export interface PokemonType {
-  type: {
-    name: string;
-  };
-}
-
-export interface PokemonStat {
-  base_stat: number;
-  stat: {
-    name: string;
-  };
-}
-
-export interface PokemonAbility {
-  ability: {
-    name: string;
-  };
-}
-
+// API response for individual Pokemon
 export interface PokemonDetails {
   id: number;
   name: string;
-  sprites: PokemonSprites;
-  types: PokemonType[];
-  stats: PokemonStat[];
-  abilities: PokemonAbility[];
+  sprites: {
+    front_default: string | null;
+  };
+  types: Array<{
+    type: { name: string };
+  }>;
+  stats: Array<{
+    base_stat: number;
+    stat: { name: string };
+  }>;
+  abilities: Array<{
+    ability: { name: string };
+  }>;
   height: number;
   weight: number;
   species: {
@@ -45,26 +34,17 @@ export interface PokemonDetails {
   };
 }
 
-export interface PokemonWithImage {
-  name: string;
-  url: string;
-  image: string;
-}
-
+// Enriched Pokemon data used in the app
 export interface PokemonFullData {
   id: number;
   name: string;
   url: string;
-  image: string;
-  sprites: PokemonSprites;
-  types: PokemonType[];
-  stats: PokemonStat[];
-  abilities: PokemonAbility[];
+  image: string | null;
+  sprites: PokemonDetails['sprites'];
+  types: PokemonDetails['types'];
+  stats: PokemonDetails['stats'];
+  abilities: PokemonDetails['abilities'];
   height: number;
   weight: number;
-  description: string;
-}
-
-export interface PokemonWithDescription extends PokemonDetails {
   description: string;
 }
