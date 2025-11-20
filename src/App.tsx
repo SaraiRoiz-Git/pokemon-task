@@ -6,8 +6,10 @@ import { usePokemonList } from './hooks/usePokemonList';
 import { PokemonFullData } from './types/pokemon';
 
 function App() {
+  //better use state manager like redux or zustand to manage the state 
+  // better use react query to manage the data fetching and caching
+  // better use react router to manage the routing (for future features)
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonFullData | null>(null);
-
   const {
     data: pokemonList,
     isLoading: loading,

@@ -53,7 +53,7 @@ export function PokemonList({
         <RefreshButton onClick={onRefresh}>Refresh</RefreshButton>
       </Header>
       <Grid>
-        {pokemon.map((poke) => (
+        {pokemon.map((poke) => (//to avoid re-rendering the entire list on every render, we can use callback function to prevent the function from being recreated on every render
           <PokemonCard
             key={poke.name}
             selected={isSelected(poke)}

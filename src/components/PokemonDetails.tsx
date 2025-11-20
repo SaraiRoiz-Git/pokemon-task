@@ -3,10 +3,11 @@ import { getTypeColor } from '../config/constants';
 import { PokemonFullData } from '../types/pokemon';
 
 interface PokemonDetailsProps {
-  pokemon: PokemonFullData | null;
+  pokemon: PokemonFullData | null; //replace the any type with the PokemonFullData type
   loading: boolean;
-}
+} //remove the error and onRetry props no need to display the error message and just use the already loaded data from the usePokemonList hook
 
+//better split the code into smaller components
 export function PokemonDetails({ pokemon, loading }: PokemonDetailsProps) {
   if (loading) {
     return (
@@ -47,7 +48,7 @@ export function PokemonDetails({ pokemon, loading }: PokemonDetailsProps) {
         <Section>
           <SectionTitle>Types</SectionTitle>
           <Types>
-            {pokemon.types.map((t: any) => (
+            {pokemon.types.map((t: any) => (//don't use any .to avoid re-rendering the entire list on every render, we can use callback function to prevent the function from being recreated on every render better take it out of the rander
               <TypeBadge key={t.type.name} type={t.type.name}>
                 {t.type.name}
               </TypeBadge>
@@ -58,7 +59,7 @@ export function PokemonDetails({ pokemon, loading }: PokemonDetailsProps) {
         <Section>
           <SectionTitle>Abilities</SectionTitle>
           <Abilities>
-            {pokemon.abilities.map((a: any) => (
+            {pokemon.abilities.map((a: any) => (//dont use any to avoid re-rendering the entire list on every render, we can use callback function to prevent the function from being recreated on every render
               <AbilityBadge key={a.ability.name}>
                 {a.ability.name.replace('-', ' ')}
               </AbilityBadge>
@@ -83,7 +84,7 @@ export function PokemonDetails({ pokemon, loading }: PokemonDetailsProps) {
         <Section>
           <SectionTitle>Base Stats</SectionTitle>
           <Stats>
-            {pokemon.stats.map((stat: any) => (
+            {pokemon.stats.map((stat: any) => (//dont use any to avoid re-rendering the entire list on every render, we can use callback function to prevent the function from being recreated on every render
               <StatRow key={stat.stat.name}>
                 <StatName>{stat.stat.name.replace('-', ' ')}</StatName>
                 <StatBarContainer>
@@ -116,6 +117,30 @@ const LoadingText = styled.div`
   text-align: center;
   padding: 40px;
   color: #666;
+`;
+
+const ErrorContainer = styled.div`
+  text-align: center;
+  padding: 40px;
+`;
+
+const ErrorText = styled.div`
+  color: #e53e3e;
+  margin-bottom: 16px;
+`;
+
+const RetryButton = styled.button`
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  
+  &:hover {
+    background: #5568d3;
+  }
 `;
 
 const EmptyState = styled.div`
@@ -207,7 +232,7 @@ const StatName = styled.div`
 
 const StatBarContainer = styled.div`
   flex: 1;
-  height: 24px;
+  height: 24px; 
   background: #f0f0f0;
   border-radius: 12px;
   overflow: hidden;
