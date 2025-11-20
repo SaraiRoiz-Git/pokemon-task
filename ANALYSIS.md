@@ -93,6 +93,18 @@
 
 **Effort Key:** S = Small (< 4 hours), M = Medium (4-8 hours), L = Large (> 8 hours)
 
+**Priority Definitions:**
+- **P0 (Blocker):** Must fix before next release
+- **P1 (High):** Significantly impacts users or dev velocity
+- **P2 (Medium):** Technical debt to address soon
+- **P3 (Low):** Nice-to-have improvements
+
+**Effort Estimates:**
+- **S (Small):** 1-4 hours
+- **M (Medium):** 4-8 hours
+- **L (Large):** 1-3 days
+
+
 ---
 
 ### Top 3 Priority Justification
@@ -297,6 +309,64 @@ Less critical than architectural issues. Memoization optimizations are more effe
 
 #### Issue #8: Styling Organization (P3)
 Low impact on users and developers. Address when refactoring individual components.
+
+---
+
+## 5. Assumptions & Questions
+
+### Assumptions I Made
+1. **Pokemon data is static** - The Pokemon API data doesn't change frequently, so aggressive caching with `staleTime: Infinity` is appropriate for the Pokemon list.
+2. **Target audience is casual users** - Users want quick access to random Pokemon, not comprehensive search/filter capabilities.
+3. **Mobile-first performance matters** - Many users will access on mobile with ~200ms latency, making parallel fetching critical.
+4. **Team is familiar with React** - The team can adopt React Query patterns without extensive training.
+5. **No authentication required** - The app is public-facing with no user-specific data to manage.
+
+### Questions I Would Ask
+1. **Usage patterns:** How often do users refresh? This affects caching strategy and API rate limiting concerns.
+2. **Future features:** Are search, filtering, or favorites planned? This would influence architecture decisions.
+3. **Performance requirements:** What's the acceptable load time? Are there specific Core Web Vitals targets?
+4. **Team capacity:** How much time is available for this refactoring? This affects which issues to prioritize.
+5. **Deployment pipeline:** Is there CI/CD in place? This affects how we validate changes.
+6. **Error tracking:** Is there existing monitoring (Sentry, etc.)? This affects error handling approach.
+
+---
+
+## 6. Implementation Notes
+
+### Which issue I chose to refactor: Issue #2 - React Query Implementation
+
+**Why this one:**
+- **Force multiplier** - Solves Issues #1, #2, #4, and partially #6 with one implementation
+- **Already installed** - React Query is in package.json, zero additional dependencies
+- **Highest ROI** - 10x performance improvement with medium effort
+- **Industry standard** - Team benefits from learning widely-used patterns
+
+**Approach taken:**
+- Implemented React Query with `useQuery` hooks for automatic caching, retries, and loading states
+- Created custom hooks (`usePokemonList`, `useAllPokemon`) to encapsulate data fetching logic
+- Used `Promise.all()` for parallel fetching instead of sequential for-loop
+- Configured QueryClient with optimized defaults (staleTime, gcTime, retry count)
+- Separated API fetching functions from UI components for better testability
+- Extracted utility functions to `/utils` for reusability
+- Added comprehensive TypeScript interfaces in `/types`
+- Centralized constants and configuration in `/config`
+
+**What changed:**
+- `src/App.tsx` - Reduced from 130+ lines to ~50 lines (thin orchestration layer)
+- `src/main.tsx` - Added QueryClientProvider with configured QueryClient
+- `src/hooks/usePokemonList.ts` - New hook with React Query and parallel fetching
+- `src/hooks/useAllPokemon.ts` - New hook for cached Pokemon list with `staleTime: Infinity`
+- `src/utils/array.ts` - Extracted `getRandomElements` utility with optimized partial Fisher-Yates
+- `src/types/pokemon.ts` - Added comprehensive TypeScript interfaces for all Pokemon data
+- `src/config/constants.ts` - Centralized API URLs, limits, cache settings, and type colors
+- `src/utils/array.test.ts` - Added 8 unit tests for extracted utility functions
+- `src/hooks/usePokemonList.test.tsx` - Added 6 unit tests demonstrating React Query caching, parallel fetching, loading states, and error handling
+
+**What stayed the same:**
+- Component structure (`PokemonList`, `PokemonDetails`) - UI components unchanged
+- Styling approach - Kept styled-components as-is
+- Overall user experience - Same functionality, just faster
+- API endpoints - Same Pokemon API usage
 
 ---
 

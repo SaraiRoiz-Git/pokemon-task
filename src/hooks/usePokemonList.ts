@@ -8,6 +8,10 @@ import { getRandomElements } from "../utils/array";
 import { RANDOM_POKEMON_COUNT } from "../config/constants";
 import { useAllPokemon } from "./useAllPokemon";
 
+/**
+ * @returns Query result with Pokemon data, loading state, error state, and refresh function
+ */
+
 interface FlavorTextEntry {
   flavor_text: string;
   language: {
@@ -19,14 +23,19 @@ interface SpeciesData {
   flavor_text_entries: FlavorTextEntry[];
 }
 
+/**
+ *
+ * @param pokemonList - Array of Pokemon to fetch details for
+ * @returns Array of Pokemon with full data including descriptions
+ */
 const fetchPokemonFullData = async (
   pokemonList: PokemonListItem[]
 ): Promise<PokemonFullData[]> => {
-  // Get random Pokemon from cached list
+  // Get random Pokemon from cached list (uses extracted utility function - Issue #5)
   const randomPokemon = getRandomElements(pokemonList, RANDOM_POKEMON_COUNT);
 
-  // Parallel fetching - 10x faster than sequential
-  const pokemonFullData = await Promise.all(//replace the for loop with a promise.all to fetch the pokemon details in parallel
+  // Parallel fetching with Promise.all - 10x faster than sequential for-loop (Issue #1)
+  const pokemonFullData = await Promise.all(
     randomPokemon.map(async (pokemon) => {
       // Fetch Pokemon details
       const detailResponse = await fetch(pokemon.url);
@@ -37,8 +46,9 @@ const fetchPokemonFullData = async (
 
       // Fetch species data for description
       const speciesResponse = await fetch(details.species.url);
-      if (!speciesResponse.ok) {//if the species response is not ok, throw an error
-        throw new Error(`Failed to fetch species for ${pokemon.name}`);//throw an error with the pokemon name
+      if (!speciesResponse.ok) {
+        //if the species response is not ok, throw an error
+        throw new Error(`Failed to fetch species for ${pokemon.name}`); //throw an error with the pokemon name
       }
       const speciesData: SpeciesData = await speciesResponse.json();
 
@@ -46,7 +56,7 @@ const fetchPokemonFullData = async (
       const englishEntry = speciesData.flavor_text_entries.find(
         (entry) => entry.language.name === "en"
       );
-
+      //return the pokemon data with the id, name, url, image, sprites, types, stats, abilities, height, weight, and description
       return {
         id: details.id,
         name: pokemon.name,

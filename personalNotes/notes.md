@@ -1,9 +1,3 @@
-1) review the code 
-2) write notes on issus i see
-3) group issuse
-4) prioritize issues
-5) select most important 3 , 
-
 
 
 

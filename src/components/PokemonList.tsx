@@ -1,4 +1,73 @@
 import styled from 'styled-components';
+import { PokemonFullData } from '../types/pokemon';
+
+interface PokemonListProps {
+  pokemon: PokemonFullData[]; //replace the any type with the PokemonFullData type
+  loading: boolean;
+  error: string | null;
+  onSelect: (url: string) => void;
+  onRefresh: () => void;
+  selectedPokemon: PokemonFullData | null;
+}
+
+export function PokemonList({
+  pokemon,
+  loading,
+  error,
+  onSelect,
+  onRefresh,
+  selectedPokemon
+}: PokemonListProps) {
+
+  //better split the code into smaller components
+  const isSelected = (poke: PokemonFullData) => poke.url === selectedPokemon?.url;
+ 
+  if (loading) {
+    return (
+      <Container>
+        <Header>
+          <Title>Pokémon List</Title>
+          <RefreshButton onClick={onRefresh} disabled>Refresh</RefreshButton>
+        </Header>
+        <LoadingText>Loading Pokémon...</LoadingText>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Header>
+          <Title>Pokémon List</Title>
+          <RefreshButton onClick={onRefresh}>Retry</RefreshButton>
+        </Header>
+        <ErrorText>{error}</ErrorText>
+      </Container>
+    );
+  }
+
+  return (
+    <Container>
+      <Header>
+        <Title>Pokémon List</Title>
+        <RefreshButton onClick={onRefresh}>Refresh</RefreshButton>
+      </Header>
+      <Grid>
+        {pokemon.map((poke) => (
+          <PokemonCard
+            key={poke.name}
+            selected={isSelected(poke)}
+            onClick={() => onSelect(poke.url)}
+          >
+            <PokemonImage src={poke.image} />
+            <PokemonName>{poke.name}</PokemonName>
+          </PokemonCard>
+        ))}
+      </Grid>
+    </Container>
+  );
+}
+
 
 const Container = styled.div`
   background: white;
@@ -78,69 +147,3 @@ const ErrorText = styled.div`
   padding: 40px;
   color: #e53e3e;
 `;
-
-interface PokemonListProps {
-  pokemon: any[];
-  loading: boolean;
-  error: string | null;
-  onSelect: (url: string) => void;
-  onRefresh: () => void;
-  selectedPokemon: any;
-}
-
-export function PokemonList({ 
-  pokemon, 
-  loading, 
-  error, 
-  onSelect, 
-  onRefresh,
-  selectedPokemon 
-}: PokemonListProps) {
-  
-  const isSelected = (poke: any) => poke.url === selectedPokemon?.url;
-
-  if (loading) {
-    return (
-      <Container>
-        <Header>
-          <Title>Pokémon List</Title>
-          <RefreshButton onClick={onRefresh} disabled>Refresh</RefreshButton>
-        </Header>
-        <LoadingText>Loading Pokémon...</LoadingText>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container>
-        <Header>
-          <Title>Pokémon List</Title>
-          <RefreshButton onClick={onRefresh}>Retry</RefreshButton>
-        </Header>
-        <ErrorText>{error}</ErrorText>
-      </Container>
-    );
-  }
-
-  return (
-    <Container>
-      <Header>
-        <Title>Pokémon List</Title>
-        <RefreshButton onClick={onRefresh}>Refresh</RefreshButton>
-      </Header>
-      <Grid>
-        {pokemon.map((poke) => (
-          <PokemonCard 
-            key={poke.name}
-            selected={isSelected(poke)}
-            onClick={() => onSelect(poke.url)}
-          >
-            <PokemonImage src={poke.image} />
-            <PokemonName>{poke.name}</PokemonName>
-          </PokemonCard>
-        ))}
-      </Grid>
-    </Container>
-  );
-}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { PokemonList } from './components/PokemonList';
 import { PokemonDetails } from './components/PokemonDetails';
@@ -13,18 +13,18 @@ function App() {
     isLoading: loading,
     error: listError,
     refresh,
-  } = usePokemonList(); //get the pokemon list from the usePokemonList hook
+  } = usePokemonList();//get the pokemon list from the usePokemonList hook remove the logic of fetching the pokemon details from the API and just use the already loaded data
 
-  const handleSelectPokemon = (url: string) => {//instad of calling the API to get the pokemon details, we can just find the pokemon from the already loaded data
+  const handleSelectPokemon = useCallback((url: string) => {//useCallback to prevent the function from being recreated on every render
     // Find Pokemon from already loaded data - no API call needed
     const pokemon = pokemonList?.find(p => p.url === url) || null;
     setSelectedPokemon(pokemon);
-  };
+  }, [pokemonList]);
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {//useCallback to prevent the function from being recreated on every render
     refresh();
     setSelectedPokemon(null);
-  };
+  }, [refresh]);
 
   return (
     <AppContainer>
@@ -41,15 +41,13 @@ function App() {
         <PokemonDetails
           pokemon={selectedPokemon}
           loading={false}
-          error={null}
-          onRetry={() => { }}
         />
       </Dashboard>
     </AppContainer>
   );
 }
 
-export default App;
+export default App; //move the export to the bottom of the file
 const AppContainer = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
